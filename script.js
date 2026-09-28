@@ -14,6 +14,7 @@ if(!reduced){
   gsap.set(".stage-side",{opacity:0,y:35});
 
   const intro=gsap.timeline({
+    id:"intro",
     scrollTrigger:{
       trigger:opening,
       start:"top top",
