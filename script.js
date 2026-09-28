@@ -6,33 +6,50 @@ const pointer=document.querySelector(".pointer");
 const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if(!reduced){
-  gsap.set(card,{y:"-115vh",rotationZ:-11,rotationX:18,rotationY:-8,scale:.9});
-  gsap.set(".drop-shadow",{y:280,scale:.45,opacity:0});
-  gsap.timeline({defaults:{ease:"power3.out"}})
-    .to(card,{y:0,rotationZ:0,rotationX:0,rotationY:0,scale:1,duration:1.35,ease:"back.out(1.35)"})
-    .to(".drop-shadow",{y:205,scale:1,opacity:.7,duration:.75},"-=.85");
-  
-  const flip=gsap.timeline({paused:true});
-  flip.to(card,{rotationY:180,duration:1,ease:"power2.inOut"})
-      .to(card,{y:"-18vh",scale:.72,duration:.7,ease:"power2.inOut"},"-=.2");
+  // One master scroll timeline: fall -> settle -> flip -> exit.
+  // Keeping the entire intro in one timeline prevents the card from getting
+  // caught between competing ScrollTriggers on desktop.
+  gsap.set(card,{y:"-105vh",rotationZ:-10,rotationX:16,rotationY:-7,scale:.88});
+  gsap.set(".drop-shadow",{y:275,scale:.35,opacity:0});
+  gsap.set(".stage-side",{opacity:0,y:35});
 
-  ScrollTrigger.create({
-    trigger:opening,start:"top top",end:"+=105%",scrub:1,
-    pin:false,onUpdate:self=>{
-      const p=self.progress;
-      flip.progress(Math.min(1,Math.max(0,(p-.18)/.62)));
-      gsap.to(meter,{scaleY:p,duration:.15,overwrite:true});
-      gsap.set(".opening-caption",{y:-p*90,opacity:1-p*.7});
-      gsap.set(".opening-ui.top",{y:-p*35});
-      gsap.set(".opening-ui.bottom",{y:p*35});
+  const intro=gsap.timeline({
+    scrollTrigger:{
+      trigger:opening,
+      start:"top top",
+      end:"+=135%",
+      scrub:1,
+      pin:true,
+      anticipatePin:1,
+      invalidateOnRefresh:true
     }
   });
+
+  intro
+    .to(card,{y:0,rotationZ:0,rotationX:0,rotationY:0,scale:1,duration:.22,ease:"power2.out"})
+    .to(".drop-shadow",{y:205,scale:1,opacity:.75,duration:.18,ease:"power2.out"},"<")
+    .to(".stage-left",{opacity:1,y:0,duration:.12,ease:"power2.out"},"-.04")
+    .to(".stage-right",{opacity:1,y:0,duration:.12,ease:"power2.out"},"<")
+    .to(".opening-caption",{opacity:1,duration:.08},"<")
+    .to(card,{rotationY:180,duration:.28,ease:"power2.inOut"})
+    .to(card,{y:"-25vh",scale:.72,rotationZ:2,duration:.22,ease:"power2.inOut"})
+    .to(".stage-side",{opacity:0,y:-35,duration:.12},"<")
+    .to(".opening-caption",{opacity:0,y:-40,duration:.12},"<");
+
   ScrollTrigger.create({
-    trigger:opening,start:"top top",end:"+=115%",pin:true,scrub:true,
-    onUpdate:self=>{gsap.set(card,{z:1});}
+    trigger:opening,start:"top top",end:"+=135%",scrub:1,
+    onUpdate:self=>{
+      gsap.set(meter,{scaleY:self.progress});
+      gsap.set(".opening-ui.top",{y:-self.progress*30});
+      gsap.set(".opening-ui.bottom",{y:self.progress*30});
+    }
+  });
+
+  card.addEventListener("click",()=>{
+    const st=ScrollTrigger.getById("intro");
+    if(st) window.scrollTo({top:opening.offsetTop+window.innerHeight*.75,behavior:"smooth"});
   });
 }
-
 document.querySelectorAll(".work-card").forEach((el,i)=>{
   gsap.from(el.querySelector(".work-visual"),{scrollTrigger:{trigger:el,start:"top 85%",end:"top 35%",scrub:1},y:100,rotateZ:i%2?-2:2,scale:.88});
   gsap.from(el.querySelector(".work-copy"),{scrollTrigger:{trigger:el,start:"top 75%",end:"top 35%",scrub:1},x:i%2?80:-80,opacity:0});
