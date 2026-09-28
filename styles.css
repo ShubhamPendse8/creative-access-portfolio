@@ -12,3 +12,23 @@
 .opening-stage{isolation:isolate}
 @media(max-width:900px){.stage-side{width:25vw;top:auto;bottom:21vh;transform:none}.stage-left{left:18px}.stage-right{right:18px}.stage-copy strong{font-size:8px}.stage-copy small{font-size:6px}.stage-copy span{font-size:6px}.stage-index{font-size:7px}.stage-side:after{display:none}.opening-stage:after{display:none}}
 @media(max-width:600px){.stage-side{bottom:17vh;width:29vw}.stage-right .stage-copy small{line-height:1.5}.stage-line{margin:10px 0}}
+
+/* tighter editorial rhythm — less empty air between chapters */
+.hero{height:82vh;min-height:560px}
+.archive,.expertise,.journey,.about,.contact{padding-top:7vw;padding-bottom:7vw}
+.archive-stage{margin-top:5vw}
+.work-card{min-height:62vh;padding:5vw 0}
+.work-visual{height:52vh;min-height:340px}
+.expertise-head{margin:6vw 0}
+.journey-line{margin-top:6vw}
+.about-copy h2,.contact h2{margin-top:25px;margin-bottom:25px}
+.contact{min-height:62vh}
+@media(max-width:800px){
+ .hero{height:78vh;min-height:560px}
+ .archive,.expertise,.journey,.about,.contact{padding-top:65px;padding-bottom:65px}
+ .work-card{min-height:auto;padding:45px 0}
+ .work-visual{height:64vw;min-height:0}
+ .archive-stage{margin-top:45px}
+ .expertise-head{margin:60px 0 45px}
+ .contact{min-height:60vh}
+}
